@@ -21,16 +21,7 @@ public class Client {
             String str = reader.readLine();
             out.writeUTF(ext);
             out.flush();
-            //String str = "C:\\Users\\Kishan Verma\\Pictures\\Saved Pictures\\Kishan.jpeg\\";
-
-            /*File f = new File("C:\\Users\\Kishan Verma\\Pictures\\Saved Pictures\\Kishan.jpeg\\");
-            FileInputStream fin = new FileInputStream(f);
-            byte[] b= new byte[(int)f.length()];
-
-            fin.read(b);
-            int len = (int) f.length();
-            out.writeInt(len);
-            out.write(b);*/
+            
 
             new Client().sendFile(out,s,str);
 
@@ -53,23 +44,7 @@ public class Client {
             System.out.println("press any key to exit");
             reader.read();
             foutEcho.close();
-            //out.write();
-            //String line = in.readUTF();
-            //System.out.println(line);
-
-            /*String str;
-            do{
-                System.out.println("inside loop");
-                str = reader.readLine();
-                //PrintWriter pw = new PrintWriter("")
-                out.writeUTF(str);
-                //out.writeObject();
-                line = in.readUTF();
-                System.out.println(line);
-                //out.writeUTF("Hello Server, I'm Client");
-                out.flush();
-            }
-            while(str!="over");*/
+            
             in.close();
             out.close();
             s.close();
@@ -93,7 +68,7 @@ public class Client {
             out.write(b);
             fin.close();
         }
-        //DataOutputStream out = new DataOutputStream( s.getOutputStream() );
+        
         catch(Exception e)
         {
             e.printStackTrace();
