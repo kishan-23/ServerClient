@@ -46,33 +46,9 @@ public class Server {
 
             //String echo = din.readUTF();
             new Server().sendEcho(str,dout);
-            /*byte[] b2=new byte[len];
-
-            dout.writeInt(len);
-            System.out.println("every thing is well");
-            dout.write(b);
-            System.out.println("Echo sent.");
-
-            fout.close();*/
+           
             din.close();
             s.close();
-            /*ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-            out.writeUTF("Server: Hello Client");
-            out.flush();
-            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-            String rec,sent;
-            System.out.println("Input Stream obtained");
-            do {
-                System.out.println("inside loop");
-                rec = in.readUTF();
-                System.out.println("Client: "+rec);
-                sent = reader.readLine();
-                out.writeUTF(sent);
-                out.flush();
-            }
-            while(rec!="over");*/
-
-
         }
         catch (IOException i)
         {
