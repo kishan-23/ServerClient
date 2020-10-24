@@ -1,9 +1,11 @@
+package Server;
+
 import java.io.*;
-import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.*;
 import com.mysql.jdbc.Driver;
+import java.net.ConnectException;
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -20,10 +22,10 @@ public class Server {
         }
 
         ServerSocket ss = new ServerSocket(5128);
-        System.out.println("Server Created");
+        System.out.println("Server.Server Created");
         System.out.println("Waiting for client..");
         Socket s = ss.accept();
-        System.out.println("Client Arrived :)");
+        System.out.println("User.Client Arrived :)");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try{
@@ -46,33 +48,9 @@ public class Server {
 
             //String echo = din.readUTF();
             new Server().sendEcho(str,dout);
-            /*byte[] b2=new byte[len];
 
-            dout.writeInt(len);
-            System.out.println("every thing is well");
-            dout.write(b);
-            System.out.println("Echo sent.");
-
-            fout.close();*/
             din.close();
             s.close();
-            /*ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-            out.writeUTF("Server: Hello Client");
-            out.flush();
-            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-            String rec,sent;
-            System.out.println("Input Stream obtained");
-            do {
-                System.out.println("inside loop");
-                rec = in.readUTF();
-                System.out.println("Client: "+rec);
-                sent = reader.readLine();
-                out.writeUTF(sent);
-                out.flush();
-            }
-            while(rec!="over");*/
-
-
         }
         catch (IOException i)
         {
