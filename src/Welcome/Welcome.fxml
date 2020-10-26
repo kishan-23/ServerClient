@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="427.0" prefWidth="360.0" style="-fx-background-color: purple;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="brandingImageView" fitHeight="130.0" fitWidth="133.0" layoutX="115.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Images/SharePointOnlineLogo.png" />
+         </image>
+         <viewport>
+            <Rectangle2D />
+         </viewport>
+      </ImageView>
+      <Text fill="#e4d7d7" fontSmoothingType="LCD" layoutX="21.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SHARE">
+         <font>
+            <Font name="Kristen ITC" size="22.0" />
+         </font>
+      </Text>
+      <Text fill="#e4d7d7" fontSmoothingType="LCD" layoutX="263.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NOW">
+         <font>
+            <Font name="Kristen ITC" size="22.0" />
+         </font>
+      </Text>
+      <Text layoutX="133.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" text="WELCOME">
+         <font>
+            <Font name="Kristen ITC" size="16.0" />
+         </font>
+      </Text>
+      <Button fx:id="loginButton2" alignment="CENTER" layoutX="44.0" layoutY="262.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="273.0" style="-fx-background-color: silver;" text="Sign in" textFill="#0d0d0d">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="loginButton21" alignment="CENTER" layoutX="44.0" layoutY="319.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="273.0" style="-fx-background-color: silver;" text="Sign  up">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
