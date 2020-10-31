@@ -2,80 +2,113 @@ package User;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws IOException {
         Socket s=null;
+        DataInputStream in = null;
+        DataOutputStream out = null;
         try{
-
             s = new Socket("localhost",5128);
             System.out.println("Connection Established");
-            //FileOutputStream out = new FileOutputStream(s.getOutputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            DataInputStream in = new DataInputStream( s.getInputStream() );
-            DataOutputStream out = new DataOutputStream( s.getOutputStream() );
-            System.out.println("Enter the name of file (with extension):");
-            String ext = reader.readLine();
-            System.out.println("Enter the Path of file: ");
-            String str = reader.readLine();
-            out.writeUTF(ext);
-            out.flush();
+            in = new DataInputStream( s.getInputStream() );
+            out = new DataOutputStream( s.getOutputStream() );
 
+            (new Client()).welcome(reader,in,out,s);
 
-            new Client().sendFile(out,s,str);
-
-            System.out.println("File Sent..");
-
-            System.out.println("Enter the path to recieve echo: ");
-            String echo = reader.readLine();
-            System.out.println("echo path:"+echo);
-            out.writeUTF(echo);
-            int len = in.readInt();
-            byte[] becho = new byte[len];
-            in.read(becho);
-            System.out.println("all fine 1");
-            File fecho = new File(echo+"@@"+ext+"//");
-            fecho.createNewFile();
-            FileOutputStream foutEcho = new FileOutputStream(fecho);
-            foutEcho.write(becho);
-            System.out.println("all fine 2");
-            System.out.println("Echo created.");
-            System.out.println("press any key to exit");
-            reader.read();
-            foutEcho.close();
-
-            in.close();
-            out.close();
-            s.close();
         }
         catch(Exception i)
         {
-            System.out.println("exception"+i.getMessage());
+            System.out.println("exception in welcome: "+i.getMessage());
+            i.printStackTrace();
         }
+        /*finally {
+            in.close();
+            out.close();
+            s.close();
+        }*/
     }
-    public void sendFile(DataOutputStream out,Socket s, String str) throws IOException
-    {
-        FileInputStream fin = null;
-        try{
-            File f = new File(str);
-            System.out.println(f.getCanonicalPath());
-            fin = new FileInputStream(f);
-            int len = (int) f.length();
-            byte[] b= new byte[len];
-            fin.read(b);
-            out.writeInt(len);
-            out.write(b);
-            fin.close();
+
+    private void welcome(BufferedReader reader, DataInputStream in, DataOutputStream out,Socket s) throws IOException {
+        System.out.println("Welcome to Share-Now..");
+        String choice;
+        while(true)
+        {
+            System.out.println("Login (press L) or Sign Up (press S)");
+            choice = reader.readLine();
+            if(choice.equals(new String("L")))
+            {
+                this.login(reader,in,out,s);
+                break;
+            }
+
+            else if(choice.equals(new String("S")))
+            {
+                this.signUP(reader,in,out);
+                break;
+            }
+
+            else{
+                System.out.println("INVALID OPTION, PLEASE TRY AGAIN");
+                continue;
+            }
         }
 
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally{
-            fin.close();
-        }
     }
+
+    private void login(BufferedReader reader,DataInputStream in, DataOutputStream out,Socket s) throws IOException {
+        System.out.println("Enter your Credentials to login:");
+        System.out.println("Enter UserID: ");
+        String userid = reader.readLine();
+        System.out.println("Enter Password: ");
+        String pass = reader.readLine();
+        out.writeUTF("LOGIN");
+        out.flush();
+        out.writeUTF(userid);
+        out.flush();
+        out.writeUTF(pass);
+        out.flush();
+        boolean result = in.readBoolean();
+        if(result) {
+            System.out.println("Login Successful");
+            User u = new User(s,userid);
+            u.handle();
+        }
+        else System.out.println("Invalid login");
+    }
+
+    private void signUP(BufferedReader reader,DataInputStream in, DataOutputStream out) throws IOException {
+        System.out.println("Welcome User");
+        out.writeUTF("SIGNUP");
+        out.flush();
+        System.out.println("Enter your name:");
+        String name = reader.readLine();
+        out.writeUTF(name);
+        out.flush();
+        boolean temp = false;
+        do{
+            System.out.println("Enter user ID of your choice:");
+            String userID = reader.readLine();
+            out.writeUTF(userID);
+            out.flush();
+            temp = in.readBoolean();
+            if(temp) System.out.println("This Username is available. Continue..");
+            else System.out.println("This username is occupied, try something else.");
+        }
+        while(!temp);
+        System.out.println("Enter your email:");
+        String mail = reader.readLine();
+        out.writeUTF(mail);
+        out.flush();
+        System.out.println("Enter password:");
+        String pass = reader.readLine();
+        out.writeUTF(pass);
+        out.flush();
+        System.out.println("Your password is (can't be obtained in future if forgot) "+pass);
+        System.out.println(in.readUTF());
+        System.out.println(in.readUTF());
+    }
+
 }

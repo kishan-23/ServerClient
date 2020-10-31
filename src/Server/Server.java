@@ -4,60 +4,39 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.*;
-import com.mysql.jdbc.Driver;
-import java.net.ConnectException;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
+
+        Connection con = null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
         try{
             //Database
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/share-nowdb","root","root");
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/share-nowdb","root","root");
             System.out.println("..Database connection established..");
         }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
-            System.out.println("Exception: ");
+            System.out.println("Exception in database connection: "+e.getMessage());
+            e.printStackTrace();
         }
 
         ServerSocket ss = new ServerSocket(5128);
         System.out.println("Server.Server Created");
-        System.out.println("Waiting for client..");
-        Socket s = ss.accept();
-        System.out.println("User.Client Arrived :)");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        try{
-            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-            DataInputStream din = new DataInputStream(s.getInputStream());
-            int len = 0;
-            String ext = din.readUTF();
-            len=din.readInt();
-            byte[] b=new byte[len];
-            din.readFully(b);
-
-            System.out.println("File Recieved..");
-            File f = new File("C:\\Users\\Kishan Verma\\MyServer\\@"+ext+"\\");
-            FileOutputStream fout = new FileOutputStream(f);
-            fout.write(b,0,len);
-
-            String str = "C:\\Users\\Kishan Verma\\MyServer\\@"+ext+"\\";
-
-            System.out.println("File written");
-
-            //String echo = din.readUTF();
-            new Server().sendEcho(str,dout);
-
-            din.close();
-            s.close();
-        }
-        catch (IOException i)
+        while(true)
         {
-            System.out.println(i.getMessage());
+            System.out.println("Waiting for client..");
+            Socket s = ss.accept();
+            System.out.println("User.Client Arrived :)");
+            UserHandler handler = new UserHandler(s,con);
+            Thread thread = new Thread(handler);
+            thread.start();
         }
-
     }
+
+
 
     public void sendEcho(String path,DataOutputStream dout)
     {

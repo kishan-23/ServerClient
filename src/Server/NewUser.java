@@ -1,12 +1,11 @@
 package Server;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class NewUser {
-    String userID , userName, email, pass;
+    private String userID , userName, email, pass;
     Connection con;
     public NewUser( Connection con ) {
         this.con = con;
