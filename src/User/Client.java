@@ -64,19 +64,22 @@ public class Client {
         String userid = reader.readLine();
         System.out.println("Enter Password: ");
         String pass = reader.readLine();
+        System.out.println("Login as Admin? (Enter 1 for YES, any other number for NO)");
+        int lc = Integer.parseInt(reader.readLine());
         out.writeUTF("LOGIN");
         out.flush();
         out.writeUTF(userid);
         out.flush();
         out.writeUTF(pass);
         out.flush();
+        out.writeInt(lc);
         boolean result = in.readBoolean();
         if(result) {
             System.out.println("Login Successful");
-            User u = new User(s,userid);
+            User u = new User(s,userid,lc);
             u.handle();
         }
-        else System.out.println("Invalid login");
+        else System.out.println("Invalid user id , password or admin access.");
     }
 
     private void signUP(BufferedReader reader,DataInputStream in, DataOutputStream out) throws IOException {

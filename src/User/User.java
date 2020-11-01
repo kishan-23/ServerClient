@@ -6,18 +6,18 @@ import java.util.Scanner;
 
 public class User {
 
-
     Socket socket =null;
     String user_id = null;
+    int adminchoice;
     private DataOutputStream dout = null;
     private DataInputStream din = null;
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public User(Socket s,String user_id) throws IOException
+    public User(Socket s,String user_id,int ad) throws IOException
     {
         this.socket = s;
         dout = new DataOutputStream( s.getOutputStream() );
         din = new DataInputStream( s.getInputStream() );
-
+        this.adminchoice = ad;
     }
 
 
@@ -163,6 +163,59 @@ public class User {
         System.out.println(din.readUTF());
     }
 
+    public void listFilesAdmin() throws IOException {
+        dout.writeUTF("LFA");
+        dout.flush();
+        String file_name = "File Name";
+        String upload_date = "Upload Date";
+        String upload_time = "Upload Time";
+        int downloads;
+        long time_lim;
+        String key = "File Key";
+        String comments = "Comments";
+        String temp = String.format("%20s",file_name)+"     "+String.format("%15s",upload_date)+"     "+String.format("%15s",upload_time)+"     "+String.format("%20s",new String("Downloads left"))+"     "+String.format("%20s",new String("Time limit (minutes)"))+"     "+String.format("%20s",new String("File Key"))+"     "+"Comments";
+        System.out.println(temp);
+        boolean status = true;
+        int counter =0;
+        while(status)
+        {
+            try{
+                status = din.readBoolean();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            if(status)
+            {
+                counter++;
+                file_name=din.readUTF();
+                upload_date = din.readUTF();
+                upload_time = din.readUTF();
+                downloads = din.readInt();
+                key = din.readUTF();
+                time_lim = din.readLong();
+                comments = din.readUTF();
+                temp = String.format("%20s",file_name)+"     "+String.format("%15s",upload_date)+"     "+String.format("%15s",upload_time)+"     "+String.format("%20d",downloads)+"     "+String.format("%20d",time_lim)+"     "+String.format("%20s",key)+"   "+comments;
+                System.out.println(temp);
+            }
+            else break;
+        }
+        System.out.println("\nFound "+counter+" files.\n");
+    }
+
+    public void delFileAdmin() throws IOException {
+        dout.writeUTF("DFA");
+        dout.flush();
+        System.out.print("Enter the file key to be deleted: ");
+        String key = reader.readLine();
+        dout.writeUTF(key);
+        dout.flush();
+        System.out.println(din.readUTF());
+    }
+
+
+
 
     public void handle() throws IOException {
         String ch="null";
@@ -173,7 +226,14 @@ public class User {
             System.out.println("1. Upload (U)");
             System.out.println("2. Download (D)");
             System.out.println("3. History (H)");
-            System.out.println("4. Exit (Q)");
+            if(adminchoice==1)
+            {
+                System.out.println("4.List all files. (L)");
+                System.out.println("5. Delete a file. (d)");
+                System.out.println("6. Quit. (Q)");
+            }
+            else
+                System.out.println("4. Exit (Q)");
             System.out.println("Enter your choice: ");
             ch = sc.nextLine();
             System.out.println(ch);
@@ -191,6 +251,16 @@ public class User {
             else if(ch.equals(new String("Q")))
             {
                 break;
+            }
+            else if(adminchoice==1)
+            {
+                if(ch.equals(new String("L"))) {
+                    this.listFilesAdmin();
+                }
+
+                if(ch.equals(new String("d"))) {
+                    this.delFileAdmin();
+                }
             }
             else{
                 System.out.println("Invalid choice, try again");

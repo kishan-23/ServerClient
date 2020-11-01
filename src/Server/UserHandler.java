@@ -17,6 +17,8 @@ public class UserHandler implements Runnable {
     String user_name;
     String mail;
     char isAdmin;
+    int adminacces=0;
+    AdminHandler ad = null;
 
     public UserHandler (Socket s, Connection con) throws IOException, SQLException {
         this.con = con;
@@ -30,6 +32,7 @@ public class UserHandler implements Runnable {
     private boolean validateLogin(Connection con, DataInputStream din, DataOutputStream dout,Socket s) throws IOException {
         String userId = din.readUTF();
         String pass = din.readUTF();
+        int adminReq = din.readInt();
         Password p = new Password(pass);
         String str1 = p.getHash();
         String query = "select pass from user_info where user_id ="+"(?)";
@@ -39,7 +42,8 @@ public class UserHandler implements Runnable {
             ResultSet rs1 = ps1.executeQuery();
             if(rs1.next()) {
                 String str2 = rs1.getString(1);
-                System.out.println(str2);
+                //char admn = rs1.getString(2).charAt(0);
+                //System.out.println(str2);
                 if (str2.equals(str1))
                 {
                     String qu = "select user_no, user_name, email, is_admin from user_info where user_id = "+"(?)";
@@ -56,6 +60,14 @@ public class UserHandler implements Runnable {
                     this.user_name = rs.getString(2);
                     this.mail = rs.getString(3);
                     this.isAdmin = rs.getString(4).charAt(0);
+                    if(isAdmin=='Y'&&adminReq==1)
+                    {
+                        ad = new AdminHandler(user_no,s,con);
+                        adminacces = 1;
+                    }
+                    else{
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -169,7 +181,6 @@ public class UserHandler implements Runnable {
             fPath = res1.getString(1);
             maxD = res1.getInt(2);
             jDate = res1.getDate(3);
-            //jDate = res1.getTime(4);
             timL = res1.getLong(5);
             name = res1.getString(6);
             long diff = (new Date().getTime()-jDate.getTime())/60000;
@@ -199,10 +210,6 @@ public class UserHandler implements Runnable {
                     }
                     dout.flush();
                     fin.close();
-                    //dout.writeLong(fil.length());
-                    //dout.flush();
-                    //dout.write(b);
-                    //dout.flush();
                     System.out.println("File sent");
                     String qur2 = "update file_info set max_downloads ="+"(?)"+"where file_key = "+"(?)";
                     PreparedStatement prs2 = con.prepareStatement(qur2);
@@ -229,7 +236,6 @@ public class UserHandler implements Runnable {
         }
         catch(Exception e)
         {
-            //e.printStackTrace();
             System.out.println("Exception in ps,rs: "+e.getMessage());
         }
 
@@ -301,6 +307,7 @@ public class UserHandler implements Runnable {
         }
     }
 
+
     public void logout()
     {
         try{
@@ -359,8 +366,17 @@ public class UserHandler implements Runnable {
                     this.history();
                 }
 
-                else{
+                else if(adminacces==1)
+                {
+                    if(ch.equals(new String("LFA")))
+                    {
+                        ad.listFilesAdmin();
+                    }
 
+                    else if(ch.equals(new String("DFA")))
+                    {
+                        ad.delFile();
+                    }
                 }
                 ch = din.readUTF();
             }
